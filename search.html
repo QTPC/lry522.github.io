@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Search</title>
+    <link rel="stylesheet" href="./assets/icon/css/font-awesome.css">
+    <link rel="stylesheet" href="./assets/style.css">
+    <style>
+        #app {
+            min-height: 30%;
+            background-position: 0 calc(50% - 100px);
+        }
+
+        .search-form {
+            background: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header>
+        <div class="container">
+            <div class="logo"><i class="fa fa-subway"></i>Railpack</div>
+            <nav>
+                <a href="">Login</a>
+                <a href="">Logout</a>
+            </nav>
+        </div>
+    </header>
+    <div class="mt-6">
+        <div class="container">
+            <div class="search-form br-8 p-2" action="">
+                <div class="form-inside">
+                    <select name="" id="from-city" class="form-ele">
+                        <option value="" selected>From</option>
+                    </select>
+                    <select name="" id="to-city" class="form-ele">
+                        <option value="" selected>To</option>
+                    </select>
+                    <input type="date" id="date" class="form-ele"/>
+                    <select name="" id="seat" class="form-ele">
+                        <option value="" selected>Second Class</option>
+                        <option value="">First Class</option>
+                    </select>
+                    <input type="number" id="passengers" class="form-ele" placeholder="Passengers"/>
+                    <button class="form-ele">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<main class="mt-6">
+    <div class="container">
+        <div class="ticket ticket-table-head br-8">
+            <div class="tk-num flex-center">No.</div>
+            <div class="tk-left p-2">
+            </div>
+            <div class="tk-right">
+                <div class="book-btn sec-btn">
+                    <div class="tk-class">Second</div>
+                </div>
+                <div class="book-btn first-btn">
+                    <div class="tk-class">First</div>
+                </div>
+            </div>
+        </div>
+        <div class="ticket_list">
+        </div>
+    </div>
+</main>
+<script src="./assets/jquery-3.3.1.min.js"></script>
+<script>
+    $.ajax({
+        url: "http://121.36.203.103/rp-example-apiv8/public/api/city",
+        method: "GET",
+        success(val) {
+            val.data.forEach(function (item) {
+                $("#from-city,#to-city").append(`<option value="${item.id}" >${item.name}</option>`)
+
+            })
+
+            if (localStorage.search) {
+                let search = JSON.parse(localStorage.search)
+                $("#from-city").val(search.form_city)
+                $("#to-city").val(search.to_city)
+                $("#date").val(search.date)
+                $("#seat").val(search.seat)
+                $("#passengers").val(search.passengers)
+                searchticket()
+            }
+        }
+    })
+
+    function searchticket(from_city, to_city, date, seat, passengers) {
+        $.ajax({
+            url: "http://121.36.203.103/rp-example-apiv8/public/api/search",
+            method: "POST",
+            data:{
+                from: from_city,
+                to: to_city,
+                date: date,
+                seat: seat,
+                passengers: passengers
+            },
+            success(val) {
+                let tickets = val.data;
+                console.log(val.data)
+                tickets.forEach(function (ticket) {
+                    let dom=$(`<div class="ticket br-8 mt-6">
+                <div class="tk-num flex-center">${ticket.number}</div>
+                <div class="tk-left p-2">
+                    <div class="tk-info">
+                        <div class="tk-from">
+                            <div class="tk-station">${ticket.from_name}</div>
+                            <div class="tk-time">${ticket.departure_time}</div>
+                        </div>
+                        <div class="tk-mid">
+                            <div class="line"></div>
+                            <div class="dur-time">${ticket.during_time}</div>
+                            <div class="line"></div>
+                        </div>
+                        <div class="tk-to">
+                            <div class="tk-station">${ticket.to_name}</div>
+                            <div class="tk-time">${ticket.arrived_name}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tk-right">
+                    <a href="" role="button" class="book-btn">
+                        <div class="tk-price flex-center"><i class="fa fa-dollar"></i><span class="ml-05">${ticket.second_cal_price}</span>
+                        </div>
+                        <div class="tk-remain flex-center"><i class="fa fa-ticket"></i><span class="ml-05">${ticket.second_remaining}</span>
+                        </div>
+                    </a>
+                    <a href="" role="button" class="book-btn">
+                        <div class="tk-price flex-center"><i class="fa fa-dollar"></i><span class="ml-05">${ticket.first_cal_price}</span>
+                        </div>
+                        <div class="tk-remain flex-center"><i class="fa fa-ticket"></i><span class="ml-05">${ticket.first_remaining}</span>
+                        </div>
+                    </a>
+                </div>
+            </div>`).appendTo(".ticket_list")
+                })
+            }
+        })
+    }
+</script>
+<footer>
+    <div class="container">
+        &copy; 2019 Railpack.
+    </div>
+</footer>
+</body>
+</html>

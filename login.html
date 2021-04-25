@@ -2,43 +2,70 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 		<title>Login</title>
-		<link rel="stylesheet" href="css/login.css">
-		<link rel="stylesheet" href="icon/css/font-awesome.css">
+		<link rel="stylesheet" href="./assets/style.css">
+		<link rel="stylesheet" href="./assets/icon/css/font-awesome.css">
+		<style>
+			#app {
+            min-height: 0;
+            padding-bottom: 0;
+            background: #01567b;
+        }
 
+        .card {
+            box-shadow: none;
+            padding: 40px;
+            border: 1px solid rgba(2, 37, 79, 0.2);
+        }
+    </style>
 	</head>
-
 	<body>
-		<div class="nav">
-			<div class="counter">
-				<div class="left">
-					<div class="fa fa-subway fa-2x" style="font-size: 28px;color: white">
-						<a href="main page.html" style="font-size: 24px;font-weight: 400">Railpack</a>
-					</div>
+		<div id="app">
+			<header>
+				<div class="container">
+					<div class="logo"><i class="fa fa-subway"></i>Railpack</div>
 				</div>
+			</header>
+		</div>
 
-				<div class="right">
-					<a href="Login.html">Login</a>
-					<a href="main page.html" style="margin-left: 15px">Logout</a>
+		<div class="container mt-1h w-20">
+			<div class="card">
+				<div class="login-form">
+					<div class="card-title">Login</div>
+					<input type="text" id="username" placeholder="Username" class="form-border" />
+					<input type="password" id="password" placeholder="Password" class="form-border" />
+					<div class="flex-space-between">
+						<button id="login-btn" class="btn">Login</button>
+						<a href="" class="link">register</a>
+					</div>
 				</div>
 			</div>
 		</div>
-		<form action="">
-			<div class="banner-Login">
-				<div class="banner-Login-title">
-					Login
-				</div>
-				<input type="text" class="banner-Login-text" placeholder="Username">
-				<input type="password" class="banner-Login-text" placeholder="Password">
-				<input type="button" class="banner-Login-button" value="Login">
-				<a href="Register.html">register</a>
-			</div>
-			<div class="footer">
-				<div class="counter">
-					&copy; 2019 Railpack
-				</div>
-			</div>
 
-		</form>
+		<footer>
+			<div class="container">
+				&copy; 2019 Railpack.
+			</div>
+		</footer>
+		<script src="./assets/jquery-3.3.1.min.js"></script>
+		<script>
+			$("#login-btn").on("click", function() {
+				$.ajax({
+					url: "http://121.36.203.103/rp-example-apiv8/public/api/auth/login",
+					type:"POST",
+					data: {
+						username: $("#username").val(),
+						password: $("#password").val(),
+					},
+					success(val) {
+						localStorage.token=val.data.token;
+						localStorage.username=val.data.username;
+						window.location.href="index.html";
+					}
+				})
+			})
+		</script>
 	</body>
 </html>
