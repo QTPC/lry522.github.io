@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Index</title>
+    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="./assets/icon/css/font-awesome.css">
+    <style>
+        body {
+            padding-bottom: 0;
+        }
+
+        footer {
+            color: #fff;
+        }
+
+        .title {
+            text-shadow: 0 0 5px rgba(60, 202, 209, 0.5);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header>
+        <div class="container">
+            <div class="logo"><i class="fa fa-subway"></i>Railpack</div>
+            <nav class="header-nav">
+                <a href="login.html">Login</a>
+                <a class="logout" href="#">Logout</a>
+            </nav>
+        </div>
+    </header>
+    <div class="mt-2h">
+        <div class="container">
+            <div class="title">Book&nbsp;&nbsp;Your&nbsp;&nbsp;Train</div>
+            <div class="search-form br-8 p-2 mt-3">
+                <div class="form-inside">
+                        <select name="" id="from-city" class="form-ele">
+                            <option value="" selected>From</option>
+                        </select>
+                    <select name="" id="to-city" class="form-ele">
+                        <option value="" selected>To</option>
+                    </select>
+                    <input type="date" id="date" class="form-ele"/>
+                    <select name="" id="seat" class="form-ele">
+                        <option value="second" selected>Second Class</option>
+                        <option value="first">First Class</option>
+                    </select>
+                    <input type="number" id="passengers" class="form-ele" placeholder="Passengers"/>
+                    <button class="search-btn form-ele">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="container">
+        &copy; 2019 Railpack.
+    </div>
+</footer>
+<script src="./assets/jquery-3.3.1.min.js"></script>
+<script>
+    $.ajax({
+        url: "http://121.36.203.103/rp-example-apiv8/public/api/city",
+        method: "GET",
+        success(val) {
+           val.data.forEach(function (item) {
+               $("#from-city,#to-city").append(`<option value="${item.id}" >${item.name}</option>`)
+           })
+        }
+    })
+
+    $(".search-btn").on("click",function () {
+        let search={
+            form_city:$("#from-city").val(),
+            to_city:$("#to-city").val(),
+            date:$("#date").val(),
+            seat:$("#seat").val(),
+            passengers:$("#passengers").val()
+        }
+        localStorage.search=JSON.stringify(search);
+        window.location.href="search.html";
+    })
+</script>
+<script>
+    if (localStorage.token) {
+        $(".header-nav").html(`
+	<a>${localStorage.username}</a>
+	<a class="logout">Logout</a>
+	`);
+
+        $(".logout").on("click", function () {
+            $.ajax({
+                url: "http://121.36.203.103/rp-example-apiv8/public/api/auth/logout?token=" + localStorage.token,
+                method: "GET",
+                success() {
+                    localStorage.clear()
+                    window.location.href = "index.html";
+                }
+            })
+        })
+    }else {
+        $(".header-nav").html(`
+	<a>Login</a>
+	`);
+    }
+</script>
+</body>
+</html>
